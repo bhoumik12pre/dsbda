@@ -1,0 +1,62 @@
+Descriptive Statistics - Measures of Central Tendency and variability
+Perform the following operations on any open source dataset (e.g., data.csv)
+1. Provide summary statistics (mean, median, minimum, maximum, standard deviation) for
+a dataset (age, income etc.) with numeric variables grouped by one of the qualitative
+(categorical) variable. For example, if your categorical variable is age groups and
+quantitative variable is income, then provide summary statistics of income grouped by the
+age groups. Create a list that contains a numeric value for each response to the categorical
+variable.
+2. Write a Python program to display some basic statistical details like percentile, mean,
+standard deviation etc. of the species of ‘Iris-setosa’, ‘Iris-versicolor’ and ‘Iris-versicolor’
+of iris.csv dataset.
+Provide the codes with outputs and explain everything that you do in this step.
+
+# Import necessary libraries
+import pandas as pd
+import seaborn as sns
+
+# Load the Iris dataset from seaborn
+df = sns.load_dataset('iris')
+
+# Display first few rows
+print("First 5 rows of the dataset:")
+print(df.head())
+
+# Group by species and calculate summary statistics for sepal_length
+summary_stats = df.groupby('species')['sepal_length'].agg(['mean', 'median', 'min', 'max', 'std'])
+print("\nSummary statistics of sepal length grouped by species:")
+print(summary_stats)
+
+# Create a list of sepal lengths for each species
+grouped_lists = df.groupby('species')['sepal_length'].apply(list).to_dict()
+print("\nList of sepal lengths for each species:")
+for species, lengths in grouped_lists.items():
+    print(f"{species}: {lengths[:5]}...")  # Show only first 5 values for brevity
+
+
+
+
+
+
+
+
+
+# Filter each species
+setosa = df[df['species'] == 'setosa']
+versicolor = df[df['species'] == 'versicolor']
+virginica = df[df['species'] == 'virginica']
+
+# Function to display descriptive stats
+def describe_species(data, name):
+    print(f"\nDescriptive statistics for {name}:")
+    print(data.describe(percentiles=[.25, .5, .75]))
+
+# Display for each species
+describe_species(setosa, 'Setosa')
+describe_species(versicolor, 'Versicolor')
+describe_species(virginica, 'Virginica')
+
+
+
+
+

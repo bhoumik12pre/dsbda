@@ -1,0 +1,64 @@
+Data Visualization I
+1. Use the inbuilt dataset 'titanic'. The dataset contains 891 rows and contains information
+about the passengers who boarded the unfortunate Titanic ship. Use the Seaborn library to
+see if we can find any patterns in the data.
+2. Write a code to check how the price of the ticket (column name: 'fare') for each passenger
+is distributed by plotting a histogram.
+
+
+
+
+# Import necessary libraries
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the Titanic dataset from Seaborn
+titanic = sns.load_dataset('titanic')
+
+# Display the first few rows of the dataset
+titanic.head()
+
+
+
+
+# Plotting the histogram of the 'fare' column
+plt.figure(figsize=(10,6))
+sns.histplot(titanic['fare'], kde=True, bins=30)
+plt.title('Distribution of Ticket Prices (Fare) for Titanic Passengers')
+plt.xlabel('Fare')
+plt.ylabel('Frequency')
+plt.show()
+
+
+
+
+# Visualizing survival rate by gender
+plt.figure(figsize=(8,6))
+sns.countplot(data=titanic, x='sex', hue='survived')
+plt.title('Survival Rate by Gender')
+plt.xlabel('Gender')
+plt.ylabel('Count')
+plt.show()
+
+# Visualizing survival rate by passenger class
+plt.figure(figsize=(8,6))
+sns.countplot(data=titanic, x='pclass', hue='survived')
+plt.title('Survival Rate by Passenger Class')
+plt.xlabel('Passenger Class')
+plt.ylabel('Count')
+plt.show()
+
+# Visualizing age distribution of survivors vs non-survivors
+plt.figure(figsize=(8,6))
+sns.histplot(titanic[titanic['survived'] == 1]['age'], kde=True, color='green', label='Survived', bins=30)
+sns.histplot(titanic[titanic['survived'] == 0]['age'], kde=True, color='red', label='Not Survived', bins=30)
+plt.title('Age Distribution of Survivors and Non-Survivors')
+plt.xlabel('Age')
+plt.ylabel('Frequency')
+plt.legend()
+plt.show()
+
+
+
+
+

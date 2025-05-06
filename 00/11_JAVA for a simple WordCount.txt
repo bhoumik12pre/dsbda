@@ -1,0 +1,123 @@
+Write a code in JAVA for a simple WordCount application that counts the number of
+occurrences of each word in a given input set using the Hadoop MapReduce framework on
+local-standalone set-up.
+
+
+1. WordCountMapper.java
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+public class WordCountMapper extends Mapper<Object, Text, Text, IntWritable> {
+
+    private final static IntWritable one = new IntWritable(1);
+    private Text word = new Text();
+
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+        // Tokenize the input text line into words
+        StringTokenizer tokenizer = new StringTokenizer(value.toString());
+        
+        while (tokenizer.hasMoreTokens()) {
+            word.set(tokenizer.nextToken());
+            context.write(word, one); // Emit each word with count 1
+        }
+    }
+}
+
+
+
+2. WordCountReducer.java
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+import java.io.IOException;
+
+public class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+    private IntWritable result = new IntWritable();
+
+    public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        
+        // Sum all the values (counts) for each word
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        
+        result.set(sum);
+        context.write(key, result); // Emit the word and its total count
+    }
+}
+
+
+3. WordCountDriver.java
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCountDriver {
+
+    public static void main(String[] args) throws Exception {
+        // Check if input and output paths are provided
+        if (args.length != 2) {
+            System.err.println("Usage: WordCount <input path> <output path>");
+            System.exit(-1);
+        }
+
+        // Set the Hadoop configuration
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "Word Count");
+
+        // Set the driver class, mapper, and reducer
+        job.setJarByClass(WordCountDriver.class);
+        job.setMapperClass(WordCountMapper.class);
+        job.setReducerClass(WordCountReducer.class);
+
+        // Set the output key and value types
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        // Set input and output paths
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        // Wait for the job to finish
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+
+
+
+javac -classpath `hadoop classpath` -d /path/to/output WordCountMapper.java WordCountReducer.java WordCountDriver.java
+jar -cvf WordCount.jar -C /path/to/output/ .
+
+hadoop jar WordCount.jar WordCountDriver <input_path> <output_path>
+
+
+
+input
+
+hello world
+hello Hadoop
+hello MapReduce
+
+
+
+
+out
+
+hello 3
+world 1
+Hadoop 1
+MapReduce 1

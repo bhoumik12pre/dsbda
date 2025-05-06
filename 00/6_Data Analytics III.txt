@@ -1,0 +1,77 @@
+Data Analytics III
+1. Implement Simple Naïve Bayes classification algorithm using Python/R on iris.csv dataset.
+2. Compute Confusion matrix to find TP, FP, TN, FN, Accuracy, Error rate, Precision, Recall
+on the given dataset.
+
+
+
+
+# Importing necessary libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+
+# Load the iris dataset
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+columns = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'class']
+df = pd.read_csv(url, header=None, names=columns)
+
+# Display the first few rows of the dataset
+df.head()
+
+
+
+
+# Split the data into features and target variable
+X = df.drop('class', axis=1)  # Features
+y = df['class']  # Target variable
+
+# Split the dataset into 70% training and 30% testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Display the shapes of the splits
+print(f"Training features: {X_train.shape}")
+print(f"Testing features: {X_test.shape}")
+
+
+
+# Initialize the Naïve Bayes classifier
+nb_classifier = GaussianNB()
+
+# Train the model using the training data
+nb_classifier.fit(X_train, y_train)
+
+
+
+# Make predictions on the test data
+y_pred = nb_classifier.predict(X_test)
+
+# Display the predictions
+print(f"Predictions: {y_pred}")
+
+
+
+
+# Compute the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+
+# Display confusion matrix
+print(f"Confusion Matrix:\n{cm}")
+
+# Compute other metrics: Accuracy, Precision, Recall, F1 Score
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, average='macro')  # Average='macro' for multi-class
+recall = recall_score(y_test, y_pred, average='macro')
+f1 = f1_score(y_test, y_pred, average='macro')
+
+# Display the metrics
+print(f"Accuracy: {accuracy}")
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
+print(f"F1 Score: {f1}")
+
+
+
+

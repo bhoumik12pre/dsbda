@@ -1,0 +1,69 @@
+Data Wrangling, I
+Perform the following operations using Python on any open source dataset (e.g., data.csv)
+1. Import all the required Python Libraries.
+2. Locate an open source data from the web (e.g., https://www.kaggle.com). Provide a clear
+ description of the data and its source (i.e., URL of the web site).
+3. Load the Dataset into pandas dataframe.
+4. Data Preprocessing: check for missing values in the data using pandas isnull(), describe()
+function to get some initial statistics. Provide variable descriptions. Types of variables etc.
+Check the dimensions of the data frame.
+5. Data Formatting and Data Normalization: Summarize the types of variables by checking
+the data types (i.e., character, numeric, integer, factor, and logical) of the variables in the
+data set. If variables are not in the correct data type, apply proper type conversions.
+6. Turn categorical variables into quantitative variables in Python.
+In addition to the codes and outputs, explain every operation that you do in the above steps and
+explain everything that you do to import/read/scrape the data set.
+
+
+
+
+
+# 1. Import all the required Python Libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 2. Load the Dataset into pandas dataframe
+# Dataset URL: https://www.kaggle.com/datasets/uciml/iris
+df = pd.read_csv("https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv")
+
+# 3. Initial Data Overview
+print("First 5 records of the dataset:")
+print(df.head())
+
+# 4. Data Preprocessing
+print("\nChecking for missing values:")
+print(df.isnull().sum())
+
+print("\nDescriptive statistics:")
+print(df.describe())
+
+print("\nVariable descriptions and types:")
+print(df.dtypes)
+
+print("\nDataset dimensions:")
+print(f"Rows: {df.shape[0]}, Columns: {df.shape[1]}")
+
+# 5. Data Formatting and Normalization
+print("\nChecking variable types:")
+print(df.dtypes)
+
+# If needed, convert data types (example shown for converting float64 to float32)
+df['sepal_length'] = df['sepal_length'].astype('float32')
+df['sepal_width'] = df['sepal_width'].astype('float32')
+df['petal_length'] = df['petal_length'].astype('float32')
+df['petal_width'] = df['petal_width'].astype('float32')
+
+# Confirm changes
+print("\nUpdated variable types:")
+print(df.dtypes)
+
+# 6. Turn categorical variables into quantitative variables
+print("\nConverting categorical column 'species' into numeric codes:")
+df['species_encoded'] = df['species'].astype('category').cat.codes
+print(df[['species', 'species_encoded']].head())
+
+# Optional: View the full dataframe after processing
+print("\nProcessed DataFrame:")
+print(df.head())

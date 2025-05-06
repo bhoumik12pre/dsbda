@@ -1,0 +1,68 @@
+Data Wrangling II
+Create an “Academic performance” dataset of students and perform the following operations using
+Python.
+1. Scan all variables for missing values and inconsistencies. If there are missing values and/or
+inconsistencies, use any of the suitable techniques to deal with them.
+2. Scan all numeric variables for outliers. If there are outliers, use any of the suitable
+techniques to deal with them.
+3. Apply data transformations on at least one of the variables. The purpose of this
+transformation should be one of the following reasons: to change the scale for better
+understanding of the variable, to convert a non-linear relation into a linear one, or to
+decrease the skewness and convert the distribution into a normal distribution.
+Reason and document your approach properly
+
+
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# Load the dataset
+url = 'https://raw.githubusercontent.com/rashida048/Datasets/master/StudentsPerformance.csv'
+df = pd.read_csv(url)
+
+# Display first few rows
+print("First 5 rows of the dataset:")
+print(df.head())
+
+# 1. Scan for missing values
+print("\nMissing values in each column:")
+print(df.isnull().sum())
+
+# 2. Detect and handle outliers in numeric columns
+numeric_cols = ['math score', 'reading score', 'writing score']
+for col in numeric_cols:
+    z_scores = np.abs(stats.zscore(df[col]))
+    outliers = np.where(z_scores > 3)
+    print(f"\nNumber of outliers in {col}: {len(outliers[0])}")
+    # Replace outliers with median
+    median = df[col].median()
+    df.loc[outliers[0], col] = median
+
+# 3. Data Transformation: Reduce skewness in 'math score'
+# Check skewness before transformation
+print("\nSkewness before transformation:")
+print(df['math score'].skew())
+
+# Apply log transformation (add 1 to avoid log(0))
+df['math_score_log'] = np.log1p(df['math score'])
+
+# Check skewness after transformation
+print("Skewness after log transformation:")
+print(df['math_score_log'].skew())
+
+# Plot original and transformed distributions
+plt.figure(figsize=(12, 5))
+
+plt.subplot(1, 2, 1)
+sns.histplot(df['math score'], kde=True, bins=30)
+plt.title('Original Math Score Distribution')
+
+plt.subplot(1, 2, 2)
+sns.histplot(df['math_score_log'], kde=True, bins=30)
+plt.title('Log-Transformed Math Score Distribution')
+
+plt.tight_layout()
+plt.show()

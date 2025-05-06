@@ -1,0 +1,157 @@
+Data Analytics II
+1. Implement logistic regression using Python/R to perform classification on
+Social_Network_Ads.csv dataset.
+2. Compute Confusion matrix to find TP, FP, TN, FN, Accuracy, Error rate, Precision, Recall
+on the given dataset
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, classification_report
+
+
+
+
+# Load Iris dataset from sklearn
+from sklearn.datasets import load_iris
+iris = load_iris()
+
+# Convert to DataFrame for easy manipulation
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['Species'] = iris.target
+
+# Show first few rows
+print(df.head())
+
+
+
+
+# Features and target variable
+X = df.drop('Species', axis=1)
+y = df['Species']
+
+# Split the data into training and testing sets (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+
+
+# Initialize the Naïve Bayes classifier
+nb_model = GaussianNB()
+
+# Train the model
+nb_model.fit(X_train, y_train)
+
+# Predict on the test set
+y_pred = nb_model.predict(X_test)
+
+
+
+
+# Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print(cm)
+
+# Accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nAccuracy: {accuracy:.2f}")
+
+# Precision, Recall, and F1-Score
+precision = precision_score(y_test, y_pred, average='weighted')
+recall = recall_score(y_test, y_pred, average='weighted')
+f1 = f1_score(y_test, y_pred, average='weighted')
+
+print(f"\nPrecision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+print(f"F1-Score: {f1:.2f}")
+
+# Detailed classification report
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+
+
+
+# Visualization of Confusion Matrix using Seaborn heatmap
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=iris.target_names, yticklabels=iris.target_names)
+plt.title("Confusion Matrix for Naïve Bayes Classifier")
+plt.xlabel("Predicted Labels")
+plt.ylabel("True Labels")
+plt.show()
+
+
+
+
+Explanation of Metrics:
+Confusion Matrix: A table used to evaluate the performance of a classification algorithm by comparing the predicted labels with the true labels.
+
+TP (True Positive): Correctly predicted the positive class.
+
+TN (True Negative): Correctly predicted the negative class.
+
+FP (False Positive): Incorrectly predicted as positive.
+
+FN (False Negative): Incorrectly predicted as negative.
+
+Accuracy: Measures the percentage of correctly classified instances:
+
+Accuracy
+=
+TP + TN
+TP + TN + FP + FN
+Accuracy= 
+TP + TN + FP + FN
+TP + TN
+​
+ 
+Error Rate: The percentage of incorrect predictions:
+
+Error Rate
+=
+1
+−
+Accuracy
+Error Rate=1−Accuracy
+Precision: Measures how many of the instances predicted as positive are actually positive:
+
+Precision
+=
+TP
+TP + FP
+Precision= 
+TP + FP
+TP
+​
+ 
+Recall (Sensitivity): Measures how many of the actual positive instances were correctly predicted as positive:
+
+Recall
+=
+TP
+TP + FN
+Recall= 
+TP + FN
+TP
+​
+ 
+F1-Score: Harmonic mean of Precision and Recall, balancing the two:
+
+F1
+=
+2
+×
+Precision
+×
+Recall
+Precision + Recall
+F1=2× 
+Precision + Recall
+Precision×Recall
+​
